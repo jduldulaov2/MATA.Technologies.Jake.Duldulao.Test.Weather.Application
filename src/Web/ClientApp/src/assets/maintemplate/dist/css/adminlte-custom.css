@@ -38,6 +38,11 @@
     color: #1f2d3d;
 }
 
+.card-title{
+    margin: 12px;
+    font-size: 20px;
+}
+
 .navbar-light .navbar-nav .nav-link {
     color: rgb(193 188 188)!important;
 }
@@ -282,7 +287,7 @@
 
   .tableFixHead {
     overflow-y: auto; /* make the table scrollable if height is more than 200 px  */
-    height: 750px; /* gives an initial height of 200px to the table */
+    height: 850px; /* gives an initial height of 200px to the table */
   }
   .tableFixHead thead th {
     position: sticky; /* make the table heads sticky */
