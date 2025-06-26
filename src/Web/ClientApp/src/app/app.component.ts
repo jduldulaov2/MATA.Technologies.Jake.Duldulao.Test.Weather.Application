@@ -18,15 +18,15 @@ export class AppComponent {
   IsLoggedIn: any;
 
   ngOnInit(){
-    this.authClient.geLoggedIn().subscribe({
-      next: result => {
-        if(result.message == 'Logged in user detected'){
-          this.IsLoggedIn = true;
-        }else{
-          this.IsLoggedIn = false;
-        }
-      },
-      error: error => console.error(error)
-    });
+    this.checkIfLoggedIn();
+  }
+
+  checkIfLoggedIn(){
+    this.IsLoggedIn = false;
+    const storedResult = JSON.parse(localStorage.getItem('github_token') || '{}');
+    if(storedResult.login != ''){
+      this.IsLoggedIn = true;
+    }
+    console.log("checkIfLoggedIn", storedResult.login);
   }
 }

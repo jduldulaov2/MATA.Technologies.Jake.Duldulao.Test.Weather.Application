@@ -15,7 +15,7 @@ export class HeaderComponent {
   displayName!: any;
 
   ngOnInit(){
-    this.DisplayLoggedInDetails();
+    this.CurrentGitHubAccount();
   }
 
   DisplayLoggedInDetails(){
@@ -42,6 +42,26 @@ export class HeaderComponent {
       },
       error: error => console.error(error)
     })
+  }
+
+  CurrentGitHubAccount(){
+    const storedResult = JSON.parse(localStorage.getItem('github_token') || '{}');
+
+    if(storedResult.login != '' && storedResult.name != ''){
+      $("#DisplayName").html(storedResult.name);
+      const img = document.getElementById('avatarimg') as HTMLImageElement;
+      img.src = storedResult.avatar_url;
+    }else if(storedResult.login == '' && storedResult.name != ''){
+      $("#DisplayName").html(storedResult.name);
+      const img = document.getElementById('avatarimg') as HTMLImageElement;
+      img.src = storedResult.avatar_url;
+    }else if(storedResult.login != '' && storedResult.name == ''){
+      $("#DisplayName").html(storedResult.login);
+      const img = document.getElementById('avatarimg') as HTMLImageElement;
+      img.src = storedResult.avatar_url;
+    }else{
+      $("#DisplayName").html("No Name");
+    }
   }
 
 }
