@@ -115,6 +115,29 @@
         }
       }
     },
+    "/api/Forecasts/GetAllForcast": {
+      "get": {
+        "tags": [
+          "Forecasts"
+        ],
+        "operationId": "GetAllForcast",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GetAllForecastQueryDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Forecasts/CreateForecast": {
       "post": {
         "tags": [
@@ -535,6 +558,57 @@
         "properties": {
           "loggedInId": {
             "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "GetAllForecastQueryDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "forecastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "temperature": {
+            "type": "string",
+            "nullable": true
+          },
+          "forecastDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "forecastDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "forecastMain": {
+            "type": "string",
+            "nullable": true
+          },
+          "pressure": {
+            "type": "string",
+            "nullable": true
+          },
+          "humidity": {
+            "type": "string",
+            "nullable": true
+          },
+          "uniqueId": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean",
             "nullable": true
           }
         }
