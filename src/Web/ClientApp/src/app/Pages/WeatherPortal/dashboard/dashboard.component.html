@@ -7,6 +7,12 @@
           <div class="col-sm-6">
             <h5 class="m-0">List of Forecast ({{ date_today | date }})</h5>
           </div>
+          <div  class="col-sm-6" style="text-align: right;">
+            <a (click)="SignOut()" class="btn btn-primary btn-sm d-block d-sm-none" style="width: 100%!important; margin-top: 20px;">
+                <i class="nav-icon fas fa-sign-out-alt"></i>
+                Sign Out
+            </a>
+          </div>
         </div>
       </div>
     </div>

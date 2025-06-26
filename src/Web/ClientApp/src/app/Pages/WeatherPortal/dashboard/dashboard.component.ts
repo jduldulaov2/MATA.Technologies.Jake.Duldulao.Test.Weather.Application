@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { ForecastsClient, GetAllForecastQueryDto } from '../../../web-api-client';
 import { SpinnerServiceService } from '../../../Services/Shared/spinner-service.service';
+import { AuthClient } from '../../../web-api-client';
+
 declare var $: any;
 
 
@@ -17,7 +19,8 @@ export class DashboardComponent {
 
   constructor(
     private forecastClient: ForecastsClient,
-    private loader: SpinnerServiceService
+    private loader: SpinnerServiceService,
+    private authClient: AuthClient
   ) { }
 
   ngOnInit(){
@@ -53,6 +56,31 @@ export class DashboardComponent {
     this.getForecastByCityAndDate();
   }
 
+  SignOut(){
+    this.authClient.geLoggedIn().subscribe({
+      next: result => {
+        if(result.resultType == 1){
+          var loggedInId = result.data?.loggedInId;
+          this.ProceedSignOut(loggedInId);
+        }else{
+          location.href = '/login';
+        }
+      },
+      error: error => console.error(error)
+    });
+  }
+
+  ProceedSignOut(id: any){
+    this.authClient.logOut(id).subscribe({
+      next: result => {
+        if(result.resultType == 1){
+          location.href = '/login';
+        }
+      },
+      error: error => console.error(error)
+    });
+  }
+  
   getForecastColor(main: string): string {
   switch (main) {
     case 'Clear': return '#FDB813';        // Sunny yellow

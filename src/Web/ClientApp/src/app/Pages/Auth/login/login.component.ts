@@ -21,12 +21,14 @@ export class LoginComponent {
   }
   
   Authorize(username: string, password: string){
+    $('#alertmobile').css('display', 'none');
     this.authClient.login(username, password, false, false).subscribe({
       next: result => {
         if(result.resultType == 1){
           location.href = '/portal/my-dashboard';
         }else{
           $("#alert").show();
+          $('#alertmobile').css('display', 'block');
         }
       },
       error: error => console.error(error)
