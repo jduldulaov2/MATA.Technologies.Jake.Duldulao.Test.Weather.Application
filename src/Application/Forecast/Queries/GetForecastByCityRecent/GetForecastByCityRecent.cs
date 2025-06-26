@@ -24,7 +24,9 @@ public class GetForecastByCityRecentQueryHandler : IRequestHandler<GetForecastBy
     {
         var forecasts = await _context.Forecast.ToListAsync();
 
-        return forecasts
+        if (!String.IsNullOrEmpty(request.City))
+        {
+            return forecasts
             .Where(f =>
                 !string.IsNullOrWhiteSpace(f.ForecastDate) &&
                 DateTime.TryParse(f.ForecastDate, out var parsedDate) &&
@@ -47,5 +49,32 @@ public class GetForecastByCityRecentQueryHandler : IRequestHandler<GetForecastBy
                 IsActive = forecast.IsActive == null ? true : forecast.IsActive
             })
             .ToList();
+        }
+        else
+        {
+            return forecasts
+            .Where(f =>
+                !string.IsNullOrWhiteSpace(f.ForecastDate) &&
+                DateTime.TryParse(f.ForecastDate, out var parsedDate) &&
+                parsedDate <= DateTime.Today
+            )
+            .OrderByDescending(f => f.ForecastDate)
+            .Select(forecast => new GetForecastByCityRecentQueryDto
+            {
+                Id = forecast.Id,
+                ForecastName = forecast.ForecastName,
+                City = forecast.City,
+                Temperature = forecast.Temperature,
+                ForecastDescription = forecast.ForecastDescription,
+                ForecastDate = forecast.ForecastDate,
+                ForecastMain = forecast.ForecastMain,
+                Pressure = forecast.Pressure,
+                Humidity = forecast.Humidity,
+                UniqueId = forecast.UniqueId,
+                IsActive = forecast.IsActive == null ? true : forecast.IsActive
+            })
+            .ToList();
+        }
+        
     }
 }
