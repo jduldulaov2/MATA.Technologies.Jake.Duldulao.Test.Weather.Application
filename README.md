@@ -1,4 +1,4 @@
-﻿# MATA.Technologies.Jake.Duldulao.Test.Weather.Application
+﻿# MATA Technologies - Jake Duldulao Test Application
 
 A **weather forecast** application is a software program or mobile/web app that provides users with up-to-date weather information for a specific location. It typically retrieves weather data from APIs (like OpenWeather, AccuWeather, or WeatherAPI) and displays it in a user-friendly format.
 
