@@ -12,6 +12,8 @@ public class Forecast : BaseAuditableEntity
 
     public string? ForecastName { get; set; }
 
+    public string? Temperature { get; set; }
+
     public string? ForecastDescription { get; set; }
 
     public string? ForecastDate { get; set; }

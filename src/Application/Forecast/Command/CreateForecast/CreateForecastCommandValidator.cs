@@ -28,5 +28,11 @@ public class CreateForecastCommandValidator : AbstractValidator<CreateForecastCo
         RuleFor(v => v.Humidity)
             .NotEmpty()
             .WithMessage("Humidity is required.");
+        RuleFor(v => v.City)
+            .NotEmpty()
+            .WithMessage("City is required.");
+        RuleFor(v => v.Temperature)
+            .NotEmpty()
+            .WithMessage("Temperature is required.");
     }
 }

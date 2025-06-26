@@ -12,6 +12,10 @@ public record CreateForecastCommand : IRequest<Result<CreateForecastCommandDto>>
 {
     public string? ForecastName { get; init; }
 
+    public string? City { get; init; }
+
+    public string? Temperature { get; init; }
+
     public string? ForecastDescription { get; init; }
 
     public string? ForecastDate { get; init; }
@@ -44,6 +48,10 @@ public class CreateForecastCommandHandler : IRequestHandler<CreateForecastComman
             var entity = new Forecast();
 
             entity.ForecastName = request.ForecastName;
+
+            entity.City = request.City;
+
+            entity.Temperature = request.Temperature;
 
             entity.ForecastDescription = request.ForecastDescription;
 
