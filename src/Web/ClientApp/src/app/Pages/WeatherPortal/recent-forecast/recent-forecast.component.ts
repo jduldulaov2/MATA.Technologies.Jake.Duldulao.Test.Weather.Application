@@ -3,17 +3,15 @@ import { ForecastsClient, GetAllForecastQueryDto } from '../../../web-api-client
 import { SpinnerServiceService } from '../../../Services/Shared/spinner-service.service';
 declare var $: any;
 
-
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  selector: 'app-recent-forecast',
+  templateUrl: './recent-forecast.component.html',
+  styleUrls: ['./recent-forecast.component.css']
 })
 
-export class DashboardComponent {
+export class RecentForecastComponent {
 
   public forcastDto : GetAllForecastQueryDto[] = [];
-  date_today: Date = new Date();
 
   constructor(
     private forecastClient: ForecastsClient,
@@ -21,7 +19,7 @@ export class DashboardComponent {
   ) { }
 
   ngOnInit(){
-    this.getForecastByCityAndDate();
+    this.getForecastList();
   }
 
   getForecastList(): void {

@@ -7,6 +7,7 @@ import { UserListComponent } from '../../Pages/WeatherPortal/user-list/user-list
 import { UserDetailsComponent } from '../../Pages/WeatherPortal/user-details/user-details.component';
 import { UserDetailItemComponent } from '../../Pages/WeatherPortal/user-detail-item/user-detail-item.component';
 import { DashboardComponent } from '../../Pages/WeatherPortal/dashboard/dashboard.component';
+import { RecentForecastComponent } from '../../Pages/WeatherPortal/recent-forecast/recent-forecast.component';
 
 const routes: Routes = [
   {
@@ -16,6 +17,10 @@ const routes: Routes = [
   {
     path: 'portal/blank-page',
     component: BlankPageComponent
+  },
+  {
+    path: 'portal/recent-forecast',
+    component: RecentForecastComponent
   }
 ];
 

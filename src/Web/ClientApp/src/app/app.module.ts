@@ -24,6 +24,7 @@ import { UserDetailsComponent } from './Pages/WeatherPortal/user-details/user-de
 import { UserDetailItemComponent } from './Pages/WeatherPortal/user-detail-item/user-detail-item.component';
 import { SpinnerComponent } from './Shared/spinner/spinner.component';
 import { DashboardComponent } from './Pages/WeatherPortal/dashboard/dashboard.component';
+import { RecentForecastComponent } from './Pages/WeatherPortal/recent-forecast/recent-forecast.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { DashboardComponent } from './Pages/WeatherPortal/dashboard/dashboard.co
     UserDetailsComponent,
     UserDetailItemComponent,
     SpinnerComponent,
-    DashboardComponent
+    DashboardComponent,
+    RecentForecastComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
