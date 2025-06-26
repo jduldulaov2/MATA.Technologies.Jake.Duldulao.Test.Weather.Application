@@ -8,6 +8,8 @@ namespace MATA.Technologies.Jake.Duldulao.Test.Weather.Application.Domain.Entiti
 
 public class Forecast : BaseAuditableEntity
 {
+    public string? City { get; set; }
+
     public string? ForecastName { get; set; }
 
     public string? ForecastDescription { get; set; }
