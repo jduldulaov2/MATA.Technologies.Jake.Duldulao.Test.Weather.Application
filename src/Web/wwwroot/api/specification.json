@@ -169,6 +169,49 @@
         }
       }
     },
+    "/api/Forecasts/GetForecastByCityAndDate": {
+      "get": {
+        "tags": [
+          "Forecasts"
+        ],
+        "operationId": "GetForecastByCityAndDate",
+        "parameters": [
+          {
+            "name": "City",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 1
+          },
+          {
+            "name": "ForecastDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GetForecastByCityAndDateQueryDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Forecasts/CreateForecast": {
       "post": {
         "tags": [
@@ -665,6 +708,57 @@
         }
       },
       "GetForecastByIdQueryDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "forecastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "temperature": {
+            "type": "string",
+            "nullable": true
+          },
+          "forecastDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "forecastDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "forecastMain": {
+            "type": "string",
+            "nullable": true
+          },
+          "pressure": {
+            "type": "string",
+            "nullable": true
+          },
+          "humidity": {
+            "type": "string",
+            "nullable": true
+          },
+          "uniqueId": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean",
+            "nullable": true
+          }
+        }
+      },
+      "GetForecastByCityAndDateQueryDto": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
