@@ -115,6 +115,70 @@
         }
       }
     },
+    "/api/Forecasts/CreateForecast": {
+      "post": {
+        "tags": [
+          "Forecasts"
+        ],
+        "operationId": "CreateForecast",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateForecastCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultOfCreateForecastCommandDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Forecasts/UpdateForecast": {
+      "put": {
+        "tags": [
+          "Forecasts"
+        ],
+        "operationId": "UpdateForecast",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateForecastCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultOfUpdateForecastCommandDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Users/AllUsersByName": {
       "get": {
         "tags": [
@@ -471,6 +535,142 @@
         "properties": {
           "loggedInId": {
             "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ResultOfCreateForecastCommandDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CreateForecastCommandDto"
+              }
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "resultType": {
+            "$ref": "#/components/schemas/ResultType"
+          }
+        }
+      },
+      "CreateForecastCommandDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CreateForecastCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "forecastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "forecastDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "forecastDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "forecastMain": {
+            "type": "string",
+            "nullable": true
+          },
+          "pressure": {
+            "type": "string",
+            "nullable": true
+          },
+          "humidity": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ResultOfUpdateForecastCommandDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/UpdateForecastCommandDto"
+              }
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "resultType": {
+            "$ref": "#/components/schemas/ResultType"
+          }
+        }
+      },
+      "UpdateForecastCommandDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "updatedDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "UpdateForecastCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "uniqueId": {
+            "type": "string",
+            "nullable": true
+          },
+          "forecastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "forecastDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "forecastDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "forecastMain": {
+            "type": "string",
+            "nullable": true
+          },
+          "pressure": {
+            "type": "string",
+            "nullable": true
+          },
+          "humidity": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean",
             "nullable": true
           }
         }

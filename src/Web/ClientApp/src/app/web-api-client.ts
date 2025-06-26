@@ -193,6 +193,129 @@ export class AuthClient implements IAuthClient {
     }
 }
 
+export interface IForecastsClient {
+    createForecast(command: CreateForecastCommand): Observable<ResultOfCreateForecastCommandDto>;
+    updateForecast(command: UpdateForecastCommand): Observable<ResultOfUpdateForecastCommandDto>;
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class ForecastsClient implements IForecastsClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "";
+    }
+
+    createForecast(command: CreateForecastCommand): Observable<ResultOfCreateForecastCommandDto> {
+        let url_ = this.baseUrl + "/api/Forecasts/CreateForecast";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(command);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateForecast(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateForecast(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ResultOfCreateForecastCommandDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ResultOfCreateForecastCommandDto>;
+        }));
+    }
+
+    protected processCreateForecast(response: HttpResponseBase): Observable<ResultOfCreateForecastCommandDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ResultOfCreateForecastCommandDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    updateForecast(command: UpdateForecastCommand): Observable<ResultOfUpdateForecastCommandDto> {
+        let url_ = this.baseUrl + "/api/Forecasts/UpdateForecast";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(command);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateForecast(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateForecast(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ResultOfUpdateForecastCommandDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ResultOfUpdateForecastCommandDto>;
+        }));
+    }
+
+    protected processUpdateForecast(response: HttpResponseBase): Observable<ResultOfUpdateForecastCommandDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ResultOfUpdateForecastCommandDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
 export interface IUsersClient {
     allUsersByName(searchValue: string | null | undefined, pageNumber: number, pageSize: number): Observable<ResultOfUsersListDto>;
     getUserByID(id: string | null | undefined): Observable<ResultOfUserByIDDto>;
@@ -825,6 +948,294 @@ export class GetLoggedInQueryDto implements IGetLoggedInQueryDto {
 
 export interface IGetLoggedInQueryDto {
     loggedInId?: string | undefined;
+}
+
+export class ResultOfCreateForecastCommandDto implements IResultOfCreateForecastCommandDto {
+    data?: CreateForecastCommandDto | undefined;
+    message?: string;
+    resultType?: ResultType;
+
+    constructor(data?: IResultOfCreateForecastCommandDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.data = _data["data"] ? CreateForecastCommandDto.fromJS(_data["data"]) : <any>undefined;
+            this.message = _data["message"];
+            this.resultType = _data["resultType"];
+        }
+    }
+
+    static fromJS(data: any): ResultOfCreateForecastCommandDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ResultOfCreateForecastCommandDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        data["message"] = this.message;
+        data["resultType"] = this.resultType;
+        return data;
+    }
+}
+
+export interface IResultOfCreateForecastCommandDto {
+    data?: CreateForecastCommandDto | undefined;
+    message?: string;
+    resultType?: ResultType;
+}
+
+export class CreateForecastCommandDto implements ICreateForecastCommandDto {
+    id?: string | undefined;
+    createdDate?: Date;
+
+    constructor(data?: ICreateForecastCommandDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.createdDate = _data["createdDate"] ? new Date(_data["createdDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): CreateForecastCommandDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateForecastCommandDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["createdDate"] = this.createdDate ? this.createdDate.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface ICreateForecastCommandDto {
+    id?: string | undefined;
+    createdDate?: Date;
+}
+
+export class CreateForecastCommand implements ICreateForecastCommand {
+    forecastName?: string | undefined;
+    forecastDescription?: string | undefined;
+    forecastDate?: string | undefined;
+    forecastMain?: string | undefined;
+    pressure?: string | undefined;
+    humidity?: string | undefined;
+
+    constructor(data?: ICreateForecastCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.forecastName = _data["forecastName"];
+            this.forecastDescription = _data["forecastDescription"];
+            this.forecastDate = _data["forecastDate"];
+            this.forecastMain = _data["forecastMain"];
+            this.pressure = _data["pressure"];
+            this.humidity = _data["humidity"];
+        }
+    }
+
+    static fromJS(data: any): CreateForecastCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateForecastCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["forecastName"] = this.forecastName;
+        data["forecastDescription"] = this.forecastDescription;
+        data["forecastDate"] = this.forecastDate;
+        data["forecastMain"] = this.forecastMain;
+        data["pressure"] = this.pressure;
+        data["humidity"] = this.humidity;
+        return data;
+    }
+}
+
+export interface ICreateForecastCommand {
+    forecastName?: string | undefined;
+    forecastDescription?: string | undefined;
+    forecastDate?: string | undefined;
+    forecastMain?: string | undefined;
+    pressure?: string | undefined;
+    humidity?: string | undefined;
+}
+
+export class ResultOfUpdateForecastCommandDto implements IResultOfUpdateForecastCommandDto {
+    data?: UpdateForecastCommandDto | undefined;
+    message?: string;
+    resultType?: ResultType;
+
+    constructor(data?: IResultOfUpdateForecastCommandDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.data = _data["data"] ? UpdateForecastCommandDto.fromJS(_data["data"]) : <any>undefined;
+            this.message = _data["message"];
+            this.resultType = _data["resultType"];
+        }
+    }
+
+    static fromJS(data: any): ResultOfUpdateForecastCommandDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ResultOfUpdateForecastCommandDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        data["message"] = this.message;
+        data["resultType"] = this.resultType;
+        return data;
+    }
+}
+
+export interface IResultOfUpdateForecastCommandDto {
+    data?: UpdateForecastCommandDto | undefined;
+    message?: string;
+    resultType?: ResultType;
+}
+
+export class UpdateForecastCommandDto implements IUpdateForecastCommandDto {
+    id?: string | undefined;
+    updatedDate?: Date;
+
+    constructor(data?: IUpdateForecastCommandDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.updatedDate = _data["updatedDate"] ? new Date(_data["updatedDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): UpdateForecastCommandDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateForecastCommandDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["updatedDate"] = this.updatedDate ? this.updatedDate.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IUpdateForecastCommandDto {
+    id?: string | undefined;
+    updatedDate?: Date;
+}
+
+export class UpdateForecastCommand implements IUpdateForecastCommand {
+    uniqueId?: string | undefined;
+    forecastName?: string | undefined;
+    forecastDescription?: string | undefined;
+    forecastDate?: string | undefined;
+    forecastMain?: string | undefined;
+    pressure?: string | undefined;
+    humidity?: string | undefined;
+    isActive?: boolean | undefined;
+
+    constructor(data?: IUpdateForecastCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.uniqueId = _data["uniqueId"];
+            this.forecastName = _data["forecastName"];
+            this.forecastDescription = _data["forecastDescription"];
+            this.forecastDate = _data["forecastDate"];
+            this.forecastMain = _data["forecastMain"];
+            this.pressure = _data["pressure"];
+            this.humidity = _data["humidity"];
+            this.isActive = _data["isActive"];
+        }
+    }
+
+    static fromJS(data: any): UpdateForecastCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateForecastCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["uniqueId"] = this.uniqueId;
+        data["forecastName"] = this.forecastName;
+        data["forecastDescription"] = this.forecastDescription;
+        data["forecastDate"] = this.forecastDate;
+        data["forecastMain"] = this.forecastMain;
+        data["pressure"] = this.pressure;
+        data["humidity"] = this.humidity;
+        data["isActive"] = this.isActive;
+        return data;
+    }
+}
+
+export interface IUpdateForecastCommand {
+    uniqueId?: string | undefined;
+    forecastName?: string | undefined;
+    forecastDescription?: string | undefined;
+    forecastDate?: string | undefined;
+    forecastMain?: string | undefined;
+    pressure?: string | undefined;
+    humidity?: string | undefined;
+    isActive?: boolean | undefined;
 }
 
 export class ResultOfUsersListDto implements IResultOfUsersListDto {
