@@ -581,6 +581,14 @@
             "type": "string",
             "nullable": true
           },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "temperature": {
+            "type": "string",
+            "nullable": true
+          },
           "forecastDescription": {
             "type": "string",
             "nullable": true
@@ -646,6 +654,14 @@
             "nullable": true
           },
           "forecastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "temperature": {
             "type": "string",
             "nullable": true
           },

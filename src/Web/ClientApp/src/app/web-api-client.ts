@@ -1036,6 +1036,8 @@ export interface ICreateForecastCommandDto {
 
 export class CreateForecastCommand implements ICreateForecastCommand {
     forecastName?: string | undefined;
+    city?: string | undefined;
+    temperature?: string | undefined;
     forecastDescription?: string | undefined;
     forecastDate?: string | undefined;
     forecastMain?: string | undefined;
@@ -1054,6 +1056,8 @@ export class CreateForecastCommand implements ICreateForecastCommand {
     init(_data?: any) {
         if (_data) {
             this.forecastName = _data["forecastName"];
+            this.city = _data["city"];
+            this.temperature = _data["temperature"];
             this.forecastDescription = _data["forecastDescription"];
             this.forecastDate = _data["forecastDate"];
             this.forecastMain = _data["forecastMain"];
@@ -1072,6 +1076,8 @@ export class CreateForecastCommand implements ICreateForecastCommand {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["forecastName"] = this.forecastName;
+        data["city"] = this.city;
+        data["temperature"] = this.temperature;
         data["forecastDescription"] = this.forecastDescription;
         data["forecastDate"] = this.forecastDate;
         data["forecastMain"] = this.forecastMain;
@@ -1083,6 +1089,8 @@ export class CreateForecastCommand implements ICreateForecastCommand {
 
 export interface ICreateForecastCommand {
     forecastName?: string | undefined;
+    city?: string | undefined;
+    temperature?: string | undefined;
     forecastDescription?: string | undefined;
     forecastDate?: string | undefined;
     forecastMain?: string | undefined;
@@ -1177,6 +1185,8 @@ export interface IUpdateForecastCommandDto {
 export class UpdateForecastCommand implements IUpdateForecastCommand {
     uniqueId?: string | undefined;
     forecastName?: string | undefined;
+    city?: string | undefined;
+    temperature?: string | undefined;
     forecastDescription?: string | undefined;
     forecastDate?: string | undefined;
     forecastMain?: string | undefined;
@@ -1197,6 +1207,8 @@ export class UpdateForecastCommand implements IUpdateForecastCommand {
         if (_data) {
             this.uniqueId = _data["uniqueId"];
             this.forecastName = _data["forecastName"];
+            this.city = _data["city"];
+            this.temperature = _data["temperature"];
             this.forecastDescription = _data["forecastDescription"];
             this.forecastDate = _data["forecastDate"];
             this.forecastMain = _data["forecastMain"];
@@ -1217,6 +1229,8 @@ export class UpdateForecastCommand implements IUpdateForecastCommand {
         data = typeof data === 'object' ? data : {};
         data["uniqueId"] = this.uniqueId;
         data["forecastName"] = this.forecastName;
+        data["city"] = this.city;
+        data["temperature"] = this.temperature;
         data["forecastDescription"] = this.forecastDescription;
         data["forecastDate"] = this.forecastDate;
         data["forecastMain"] = this.forecastMain;
@@ -1230,6 +1244,8 @@ export class UpdateForecastCommand implements IUpdateForecastCommand {
 export interface IUpdateForecastCommand {
     uniqueId?: string | undefined;
     forecastName?: string | undefined;
+    city?: string | undefined;
+    temperature?: string | undefined;
     forecastDescription?: string | undefined;
     forecastDate?: string | undefined;
     forecastMain?: string | undefined;
