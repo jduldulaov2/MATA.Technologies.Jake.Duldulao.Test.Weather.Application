@@ -195,6 +195,7 @@ export class AuthClient implements IAuthClient {
 
 export interface IForecastsClient {
     getAllForcast(): Observable<GetAllForecastQueryDto[]>;
+    getAllForcastByID(uniqueId: string | null | undefined): Observable<ResultOfGetForecastByIdQueryDto>;
     createForecast(command: CreateForecastCommand): Observable<ResultOfCreateForecastCommandDto>;
     updateForecast(command: UpdateForecastCommand): Observable<ResultOfUpdateForecastCommandDto>;
 }
@@ -257,6 +258,56 @@ export class ForecastsClient implements IForecastsClient {
             else {
                 result200 = <any>null;
             }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getAllForcastByID(uniqueId: string | null | undefined): Observable<ResultOfGetForecastByIdQueryDto> {
+        let url_ = this.baseUrl + "/api/Forecasts/GetAllForcastByID?";
+        if (uniqueId !== undefined && uniqueId !== null)
+            url_ += "UniqueId=" + encodeURIComponent("" + uniqueId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllForcastByID(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllForcastByID(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ResultOfGetForecastByIdQueryDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ResultOfGetForecastByIdQueryDto>;
+        }));
+    }
+
+    protected processGetAllForcastByID(response: HttpResponseBase): Observable<ResultOfGetForecastByIdQueryDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ResultOfGetForecastByIdQueryDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1069,6 +1120,126 @@ export class GetAllForecastQueryDto implements IGetAllForecastQueryDto {
 }
 
 export interface IGetAllForecastQueryDto {
+    id?: number | undefined;
+    forecastName?: string | undefined;
+    city?: string | undefined;
+    temperature?: string | undefined;
+    forecastDescription?: string | undefined;
+    forecastDate?: string | undefined;
+    forecastMain?: string | undefined;
+    pressure?: string | undefined;
+    humidity?: string | undefined;
+    uniqueId?: string | undefined;
+    isActive?: boolean | undefined;
+}
+
+export class ResultOfGetForecastByIdQueryDto implements IResultOfGetForecastByIdQueryDto {
+    data?: GetForecastByIdQueryDto | undefined;
+    message?: string;
+    resultType?: ResultType;
+
+    constructor(data?: IResultOfGetForecastByIdQueryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.data = _data["data"] ? GetForecastByIdQueryDto.fromJS(_data["data"]) : <any>undefined;
+            this.message = _data["message"];
+            this.resultType = _data["resultType"];
+        }
+    }
+
+    static fromJS(data: any): ResultOfGetForecastByIdQueryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ResultOfGetForecastByIdQueryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        data["message"] = this.message;
+        data["resultType"] = this.resultType;
+        return data;
+    }
+}
+
+export interface IResultOfGetForecastByIdQueryDto {
+    data?: GetForecastByIdQueryDto | undefined;
+    message?: string;
+    resultType?: ResultType;
+}
+
+export class GetForecastByIdQueryDto implements IGetForecastByIdQueryDto {
+    id?: number | undefined;
+    forecastName?: string | undefined;
+    city?: string | undefined;
+    temperature?: string | undefined;
+    forecastDescription?: string | undefined;
+    forecastDate?: string | undefined;
+    forecastMain?: string | undefined;
+    pressure?: string | undefined;
+    humidity?: string | undefined;
+    uniqueId?: string | undefined;
+    isActive?: boolean | undefined;
+
+    constructor(data?: IGetForecastByIdQueryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.forecastName = _data["forecastName"];
+            this.city = _data["city"];
+            this.temperature = _data["temperature"];
+            this.forecastDescription = _data["forecastDescription"];
+            this.forecastDate = _data["forecastDate"];
+            this.forecastMain = _data["forecastMain"];
+            this.pressure = _data["pressure"];
+            this.humidity = _data["humidity"];
+            this.uniqueId = _data["uniqueId"];
+            this.isActive = _data["isActive"];
+        }
+    }
+
+    static fromJS(data: any): GetForecastByIdQueryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetForecastByIdQueryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["forecastName"] = this.forecastName;
+        data["city"] = this.city;
+        data["temperature"] = this.temperature;
+        data["forecastDescription"] = this.forecastDescription;
+        data["forecastDate"] = this.forecastDate;
+        data["forecastMain"] = this.forecastMain;
+        data["pressure"] = this.pressure;
+        data["humidity"] = this.humidity;
+        data["uniqueId"] = this.uniqueId;
+        data["isActive"] = this.isActive;
+        return data;
+    }
+}
+
+export interface IGetForecastByIdQueryDto {
     id?: number | undefined;
     forecastName?: string | undefined;
     city?: string | undefined;
