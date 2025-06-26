@@ -22,11 +22,14 @@ export class AppComponent {
   }
 
   checkIfLoggedIn(){
-    this.IsLoggedIn = false;
     const storedResult = JSON.parse(localStorage.getItem('github_token') || '{}');
-    if(storedResult.login != ''){
+    console.log("cc", storedResult.login);
+    if (typeof storedResult.login === 'undefined') {
+      this.IsLoggedIn = false;
+    }else{
+      if(storedResult.login != ''){
       this.IsLoggedIn = true;
     }
-    console.log("checkIfLoggedIn", storedResult.login);
+   }
   }
 }

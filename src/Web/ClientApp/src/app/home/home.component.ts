@@ -12,7 +12,17 @@ export class HomeComponent {
   constructor(private loader: SpinnerServiceService, private authClient: AuthClient, private router: Router, private route: ActivatedRoute) {}
 
   ngOnInit(){
-    this.DetectLoggedIn();
+    this.checkIfLoggedIn();
+  }
+
+  //Need to put to service
+  checkIfLoggedIn(){
+    const storedResult = JSON.parse(localStorage.getItem('github_token') || '{}');
+    if (storedResult.login == null){
+      //location.href = '/';
+    }else{
+      location.href = '/portal/my-dashboard';
+    }
   }
 
   DetectLoggedIn(){

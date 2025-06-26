@@ -17,9 +17,20 @@ export class LoginComponent {
   txtPassword: string = "";
 
   ngOnInit(){
-    this.DetectLoggedIn();
+    this.checkIfLoggedIn();
   }
   
+  //Need to put to service
+  checkIfLoggedIn(){
+    const storedResult = JSON.parse(localStorage.getItem('github_token') || '{}');
+    if (typeof storedResult.login === 'undefined') {
+    }else{
+      if(storedResult.login != ''){
+      location.href = '/portal/my-dashboard';
+    }
+    }
+  }
+
   Authorize(username: string, password: string){
     $('#alertmobile').css('display', 'none');
     this.authClient.login(username, password, false, false).subscribe({
@@ -33,6 +44,11 @@ export class LoginComponent {
       },
       error: error => console.error(error)
     });
+  }
+
+  AuthorizeTemp(username: string, password: string){
+    $("#alert").show();
+    $('#alertmobile').css('display', 'block');
   }
 
   RedirectToGitHub(){

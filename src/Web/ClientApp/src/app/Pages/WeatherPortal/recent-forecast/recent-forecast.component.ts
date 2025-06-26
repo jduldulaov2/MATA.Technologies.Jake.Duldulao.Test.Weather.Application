@@ -21,6 +21,20 @@ export class RecentForecastComponent {
 
   ngOnInit(){
     this.getForecastByCityRecent();
+    this.checkIfLoggedIn();
+  }
+
+  ExternalSignOut(){
+    localStorage.removeItem("github_token");
+    localStorage.clear();
+    location.href = '/login';
+  }
+  
+  checkIfLoggedIn(){
+    const storedResult = JSON.parse(localStorage.getItem('github_token') || '{}');
+    if (typeof storedResult.login === 'undefined') {
+      location.href = '/login';
+    }
   }
 
   getForecastList(): void {

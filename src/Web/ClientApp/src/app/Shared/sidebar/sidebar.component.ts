@@ -14,6 +14,12 @@ export class SidebarComponent {
 
   constructor(private loader: SpinnerServiceService, private authClient: AuthClient) {}
 
+  ExternalSignOut(){
+    localStorage.removeItem("github_token");
+    localStorage.clear();
+    location.href = '/login';
+  }
+
   SignOut(){
     this.authClient.geLoggedIn().subscribe({
       next: result => {
@@ -29,6 +35,7 @@ export class SidebarComponent {
   }
 
   ProceedSignOut(id: any){
+    localStorage.removeItem("github_token");
     this.authClient.logOut(id).subscribe({
       next: result => {
         if(result.resultType == 1){
