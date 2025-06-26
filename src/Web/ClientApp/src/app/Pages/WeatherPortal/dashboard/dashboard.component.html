@@ -11,7 +11,7 @@
             <a class="btn btn-primary btn-sm" style="width: 232px!important; ">
                 <i class="fas fa-calendar-alt">
                 </i>
-                + Create New Forecast
+                + Manage Forecast
             </a>
           </div>
         </div>
@@ -27,9 +27,9 @@
                 <div class="col-md-8"><h3 class="card-title"><span><i class="fas fa-cloud"></i></span> <span style="padding-left: 20px;">List of Forecast</span></h3></div>
                 <div class="col-md-4">
                     <div class="input-group">
-                        <input id="txtSearch" type="text" class="form-control form-control-lg" placeholder="Search City" style="font-size: 1.18rem!important;">
+                        <input id="txtSearch" (keyup.enter)="onEnter()" type="text" class="form-control form-control-lg" placeholder="Search City" style="font-size: 1.18rem!important;">
                         <div class="input-group-append">
-                            <button type="submit" class="btn btn-lg btn-default" style="background: #dee5eb;border-color: #ddd;color: #444; padding: 9px 30px !important;">
+                            <button (click)="getForecastByCityAndDate()" type="submit" class="btn btn-lg btn-default" style="background: #dee5eb;border-color: #ddd;color: #444; padding: 9px 30px !important;">
                                 <i class="fa fa-search"></i>
                             </button>
                         </div>

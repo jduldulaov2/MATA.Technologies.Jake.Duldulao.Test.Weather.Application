@@ -20,8 +20,7 @@ export class DashboardComponent {
   ) { }
 
   ngOnInit(){
-    this.loader.ShowLoader();
-    this.getForecastList();
+    this.getForecastByCityAndDate();
   }
 
   getForecastList(): void {
@@ -32,6 +31,25 @@ export class DashboardComponent {
       },
       error: error => console.error(error)
     });
+  }
+
+  getForecastByCityAndDate(): void {
+    this.loader.ShowLoader();
+    var today = new Date();
+    var formattedDate = today.toISOString().split('T')[0];
+    var city = $('#txtSearch').val();
+    var _date = formattedDate;
+    this.forecastClient.getForecastByCityAndDate(city, _date).subscribe({
+      next: result => {
+        this.forcastDto = result
+        console.log(result);
+      },
+      error: error => console.error(error)
+    });
+  }
+
+  onEnter(): void {
+    this.getForecastByCityAndDate();
   }
 
   getForecastColor(main: string): string {
