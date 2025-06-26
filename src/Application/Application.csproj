@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <Folder Include="Auth\Commands\Logout\" />
+    <Folder Include="Forecast\Queries\" />
   </ItemGroup>
 
 </Project>
