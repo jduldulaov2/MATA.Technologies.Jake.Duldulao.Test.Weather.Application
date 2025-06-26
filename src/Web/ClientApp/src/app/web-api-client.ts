@@ -17,6 +17,7 @@ export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface IAuthClient {
     login(userName: string | null | undefined, password: string | null | undefined, isPersistent: boolean, lockOutOnFailure: boolean): Observable<ResultOfLoginDto>;
+    getGitTokens(code: string | null | undefined): Observable<ResultOfExchangeCodeRequest>;
     logOut(userId: string | null | undefined): Observable<ResultOfLogoutDto>;
     geLoggedIn(): Observable<ResultOfGetLoggedInQueryDto>;
 }
@@ -84,6 +85,56 @@ export class AuthClient implements IAuthClient {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result200 = ResultOfLoginDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getGitTokens(code: string | null | undefined): Observable<ResultOfExchangeCodeRequest> {
+        let url_ = this.baseUrl + "/api/Auth/GetGitTokens?";
+        if (code !== undefined && code !== null)
+            url_ += "Code=" + encodeURIComponent("" + code) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetGitTokens(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetGitTokens(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ResultOfExchangeCodeRequest>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ResultOfExchangeCodeRequest>;
+        }));
+    }
+
+    protected processGetGitTokens(response: HttpResponseBase): Observable<ResultOfExchangeCodeRequest> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ResultOfExchangeCodeRequest.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1009,6 +1060,102 @@ export enum ResultType {
     Warning = 2,
     Error = 3,
     Information = 4,
+}
+
+export class ResultOfExchangeCodeRequest implements IResultOfExchangeCodeRequest {
+    data?: ExchangeCodeRequest | undefined;
+    message?: string;
+    resultType?: ResultType;
+
+    constructor(data?: IResultOfExchangeCodeRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.data = _data["data"] ? ExchangeCodeRequest.fromJS(_data["data"]) : <any>undefined;
+            this.message = _data["message"];
+            this.resultType = _data["resultType"];
+        }
+    }
+
+    static fromJS(data: any): ResultOfExchangeCodeRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new ResultOfExchangeCodeRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        data["message"] = this.message;
+        data["resultType"] = this.resultType;
+        return data;
+    }
+}
+
+export interface IResultOfExchangeCodeRequest {
+    data?: ExchangeCodeRequest | undefined;
+    message?: string;
+    resultType?: ResultType;
+}
+
+export class ExchangeCodeRequest implements IExchangeCodeRequest {
+    login?: string;
+    name?: string;
+    email?: string;
+    avatar_url?: string;
+    html_url?: string;
+
+    constructor(data?: IExchangeCodeRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.login = _data["login"];
+            this.name = _data["name"];
+            this.email = _data["email"];
+            this.avatar_url = _data["avatar_url"];
+            this.html_url = _data["html_url"];
+        }
+    }
+
+    static fromJS(data: any): ExchangeCodeRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new ExchangeCodeRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["login"] = this.login;
+        data["name"] = this.name;
+        data["email"] = this.email;
+        data["avatar_url"] = this.avatar_url;
+        data["html_url"] = this.html_url;
+        return data;
+    }
+}
+
+export interface IExchangeCodeRequest {
+    login?: string;
+    name?: string;
+    email?: string;
+    avatar_url?: string;
+    html_url?: string;
 }
 
 export class ResultOfLogoutDto implements IResultOfLogoutDto {

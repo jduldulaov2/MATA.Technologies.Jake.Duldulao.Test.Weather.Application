@@ -64,6 +64,37 @@
         }
       }
     },
+    "/api/Auth/GetGitTokens": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "operationId": "GetGitTokens",
+        "parameters": [
+          {
+            "name": "Code",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultOfExchangeCodeRequest"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Auth/LogOut": {
       "get": {
         "tags": [
@@ -604,6 +635,47 @@
           3,
           4
         ]
+      },
+      "ResultOfExchangeCodeRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ExchangeCodeRequest"
+              }
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "resultType": {
+            "$ref": "#/components/schemas/ResultType"
+          }
+        }
+      },
+      "ExchangeCodeRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "login": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "avatar_url": {
+            "type": "string"
+          },
+          "html_url": {
+            "type": "string"
+          }
+        }
       },
       "ResultOfLogoutDto": {
         "type": "object",
