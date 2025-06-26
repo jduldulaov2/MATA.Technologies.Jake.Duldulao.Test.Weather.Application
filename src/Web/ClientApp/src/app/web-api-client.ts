@@ -197,6 +197,7 @@ export interface IForecastsClient {
     getAllForcast(): Observable<GetAllForecastQueryDto[]>;
     getAllForcastByID(uniqueId: string | null | undefined): Observable<ResultOfGetForecastByIdQueryDto>;
     getForecastByCityAndDate(city: string | null | undefined, forecastDate: string | null | undefined): Observable<GetForecastByCityAndDateQueryDto[]>;
+    getForecastByCityRecent(city: string | null | undefined): Observable<GetForecastByCityRecentQueryDto[]>;
     createForecast(command: CreateForecastCommand): Observable<ResultOfCreateForecastCommandDto>;
     updateForecast(command: UpdateForecastCommand): Observable<ResultOfUpdateForecastCommandDto>;
 }
@@ -364,6 +365,63 @@ export class ForecastsClient implements IForecastsClient {
                 result200 = [] as any;
                 for (let item of resultData200)
                     result200!.push(GetForecastByCityAndDateQueryDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getForecastByCityRecent(city: string | null | undefined): Observable<GetForecastByCityRecentQueryDto[]> {
+        let url_ = this.baseUrl + "/api/Forecasts/GetForecastByCityRecent?";
+        if (city !== undefined && city !== null)
+            url_ += "City=" + encodeURIComponent("" + city) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetForecastByCityRecent(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetForecastByCityRecent(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<GetForecastByCityRecentQueryDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<GetForecastByCityRecentQueryDto[]>;
+        }));
+    }
+
+    protected processGetForecastByCityRecent(response: HttpResponseBase): Observable<GetForecastByCityRecentQueryDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(GetForecastByCityRecentQueryDto.fromJS(item));
             }
             else {
                 result200 = <any>null;
@@ -1376,6 +1434,82 @@ export class GetForecastByCityAndDateQueryDto implements IGetForecastByCityAndDa
 }
 
 export interface IGetForecastByCityAndDateQueryDto {
+    id?: number | undefined;
+    forecastName?: string | undefined;
+    city?: string | undefined;
+    temperature?: string | undefined;
+    forecastDescription?: string | undefined;
+    forecastDate?: string | undefined;
+    forecastMain?: string | undefined;
+    pressure?: string | undefined;
+    humidity?: string | undefined;
+    uniqueId?: string | undefined;
+    isActive?: boolean | undefined;
+}
+
+export class GetForecastByCityRecentQueryDto implements IGetForecastByCityRecentQueryDto {
+    id?: number | undefined;
+    forecastName?: string | undefined;
+    city?: string | undefined;
+    temperature?: string | undefined;
+    forecastDescription?: string | undefined;
+    forecastDate?: string | undefined;
+    forecastMain?: string | undefined;
+    pressure?: string | undefined;
+    humidity?: string | undefined;
+    uniqueId?: string | undefined;
+    isActive?: boolean | undefined;
+
+    constructor(data?: IGetForecastByCityRecentQueryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.forecastName = _data["forecastName"];
+            this.city = _data["city"];
+            this.temperature = _data["temperature"];
+            this.forecastDescription = _data["forecastDescription"];
+            this.forecastDate = _data["forecastDate"];
+            this.forecastMain = _data["forecastMain"];
+            this.pressure = _data["pressure"];
+            this.humidity = _data["humidity"];
+            this.uniqueId = _data["uniqueId"];
+            this.isActive = _data["isActive"];
+        }
+    }
+
+    static fromJS(data: any): GetForecastByCityRecentQueryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetForecastByCityRecentQueryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["forecastName"] = this.forecastName;
+        data["city"] = this.city;
+        data["temperature"] = this.temperature;
+        data["forecastDescription"] = this.forecastDescription;
+        data["forecastDate"] = this.forecastDate;
+        data["forecastMain"] = this.forecastMain;
+        data["pressure"] = this.pressure;
+        data["humidity"] = this.humidity;
+        data["uniqueId"] = this.uniqueId;
+        data["isActive"] = this.isActive;
+        return data;
+    }
+}
+
+export interface IGetForecastByCityRecentQueryDto {
     id?: number | undefined;
     forecastName?: string | undefined;
     city?: string | undefined;
