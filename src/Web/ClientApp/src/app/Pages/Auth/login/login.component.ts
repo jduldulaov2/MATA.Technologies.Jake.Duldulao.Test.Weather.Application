@@ -35,6 +35,16 @@ export class LoginComponent {
     });
   }
 
+  RedirectToGitHub(){
+    const clientId = 'Ov23liaWF3wQPaLy03zB';
+    const redirectUri = encodeURIComponent('https://localhost:44447/auth/callback');
+    const scope = 'read:user user:email';
+
+    window.location.href = 
+  `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&allow_signup=true`;
+
+  }
+
   DetectLoggedIn(){
     this.authClient.geLoggedIn().subscribe({
       next: result => {
