@@ -82,7 +82,25 @@
                                 {{item.forecastDescription}}
                             </td>
                             <td>
-                               {{item.forecastMain}}
+                                <span>
+                                    <i class="fas" [ngClass]="{
+                                    'fa-sun': item.forecastMain === 'Clear',
+                                    'fa-cloud': item.forecastMain === 'Clouds',
+                                    'fa-cloud-rain': item.forecastMain === 'Drizzle' || item.forecastMain === 'Rain',
+                                    'fa-smog': item.forecastMain === 'Fog',
+                                    'fa-temperature-high': item.forecastMain === 'Hot',
+                                    'fa-poo-storm': item.forecastMain === 'Storm',
+                                    'fa-wind': item.forecastMain === 'Wind'
+                                    }"
+                                    
+                                    [ngStyle]="{
+                                        color: getForecastColor(item.forecastMain)
+                                    }"
+                                    ></i>
+                                </span>
+                               <span style="padding-left: 10px;">
+                                    {{item.forecastMain}}
+                               </span>
                             </td>
                             <td>
                                {{item.pressure}}

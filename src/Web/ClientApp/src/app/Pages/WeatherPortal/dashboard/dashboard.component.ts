@@ -34,4 +34,18 @@ export class DashboardComponent {
     });
   }
 
+  getForecastColor(main: string): string {
+  switch (main) {
+    case 'Clear': return '#FDB813';        // Sunny yellow
+    case 'Clouds': return '#B0BEC5';       // Gray
+    case 'Drizzle': return '#4FC3F7';      // Light blue
+    case 'Rain': return '#0288D1';         // Blue
+    case 'Fog': return '#90A4AE';          // Foggy gray
+    case 'Hot': return '#FF5722';          // Hot orange/red
+    case 'Storm': return '#512DA8';        // Deep purple
+    case 'Wind': return '#26C6DA';         // Turquoise wind
+    default: return '#757575';             // Neutral gray
+  }
+}
+
 }
