@@ -9,6 +9,7 @@ declare var $: any;
   styleUrls: ['./recent-forecast.component.css']
 })
 
+
 export class RecentForecastComponent {
 
   public forcastDto : GetAllForecastQueryDto[] = [];
@@ -19,7 +20,7 @@ export class RecentForecastComponent {
   ) { }
 
   ngOnInit(){
-    this.getForecastList();
+    this.getForecastByCityRecent();
   }
 
   getForecastList(): void {
@@ -32,13 +33,13 @@ export class RecentForecastComponent {
     });
   }
 
-  getForecastByCityAndDate(): void {
+  getForecastByCityRecent(): void {
     this.loader.ShowLoader();
     var today = new Date();
     var formattedDate = today.toISOString().split('T')[0];
     var city = $('#txtSearch').val();
     var _date = formattedDate;
-    this.forecastClient.getForecastByCityAndDate(city, _date).subscribe({
+    this.forecastClient.getForecastByCityRecent(city).subscribe({
       next: result => {
         this.forcastDto = result
         console.log(result);
@@ -48,7 +49,7 @@ export class RecentForecastComponent {
   }
 
   onEnter(): void {
-    this.getForecastByCityAndDate();
+    this.getForecastByCityRecent();
   }
 
   getForecastColor(main: string): string {
