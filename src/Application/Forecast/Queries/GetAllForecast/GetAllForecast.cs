@@ -22,20 +22,22 @@ public class GetAllForecastQueryHandler : IRequestHandler<GetAllForecastQuery, L
 
     public async Task<List<GetAllForecastQueryDto>> Handle(GetAllForecastQuery request, CancellationToken cancellationToken)
     {
-        return await (from forecast in _context.Forecast
-                      select new GetAllForecastQueryDto
-                      {
-                          Id = forecast.Id,
-                          ForecastName = forecast.ForecastName,
-                          City = forecast.City,
-                          Temperature = forecast.Temperature,   
-                          ForecastDescription = forecast.ForecastDescription,
-                          ForecastDate = forecast.ForecastDate, 
-                          ForecastMain = forecast.ForecastMain,
-                          Pressure = forecast.Pressure,
-                          Humidity = forecast.Humidity,
-                          UniqueId = forecast.UniqueId,
-                          IsActive = forecast.IsActive == null ? true : forecast.IsActive
-                      }).ToListAsync();
+        return await _context.Forecast
+                 .OrderByDescending(f => f.ForecastDate)
+                 .Select(forecast => new GetAllForecastQueryDto
+                 {
+                     Id = forecast.Id,
+                     ForecastName = forecast.ForecastName,
+                     City = forecast.City,
+                     Temperature = forecast.Temperature,
+                     ForecastDescription = forecast.ForecastDescription,
+                     ForecastDate = forecast.ForecastDate,
+                     ForecastMain = forecast.ForecastMain,
+                     Pressure = forecast.Pressure,
+                     Humidity = forecast.Humidity,
+                     UniqueId = forecast.UniqueId,
+                     IsActive = forecast.IsActive == null ? true : forecast.IsActive
+                 })
+                 .ToListAsync();
     }
 }
