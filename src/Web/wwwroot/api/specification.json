@@ -146,6 +146,37 @@
         }
       }
     },
+    "/api/Auth/GitHubLogout": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "operationId": "GitHubLogout",
+        "parameters": [
+          {
+            "name": "AccessToken",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultOfGitHubLogoutDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Forecasts/GetAllForcast": {
       "get": {
         "tags": [
@@ -674,6 +705,9 @@
           },
           "html_url": {
             "type": "string"
+          },
+          "access_token": {
+            "type": "string"
           }
         }
       },
@@ -737,6 +771,36 @@
         "additionalProperties": false,
         "properties": {
           "loggedInId": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ResultOfGitHubLogoutDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/GitHubLogoutDto"
+              }
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "resultType": {
+            "$ref": "#/components/schemas/ResultType"
+          }
+        }
+      },
+      "GitHubLogoutDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "message": {
             "type": "string",
             "nullable": true
           }

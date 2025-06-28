@@ -158,3 +158,9 @@ dotnet watch run
 Navigate to https://localhost:5001. The application will automatically reload if you change any of the source files.
 
 Start in the `.\src\Application\` folder.
+
+## ✅ Demo Application
+
+**"You can check the test application at this link: http://www.weather.somee.com/
+
+Note: This is hosted on a free service, so it may be temporarily disabled by the hosting provider."**

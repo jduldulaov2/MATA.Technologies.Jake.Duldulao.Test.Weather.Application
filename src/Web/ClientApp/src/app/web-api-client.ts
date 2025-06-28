@@ -20,6 +20,7 @@ export interface IAuthClient {
     getGitTokens(code: string | null | undefined): Observable<ResultOfExchangeCodeRequest>;
     logOut(userId: string | null | undefined): Observable<ResultOfLogoutDto>;
     geLoggedIn(): Observable<ResultOfGetLoggedInQueryDto>;
+    gitHubLogout(accessToken: string | null | undefined): Observable<ResultOfGitHubLogoutDto>;
 }
 
 @Injectable({
@@ -233,6 +234,56 @@ export class AuthClient implements IAuthClient {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result200 = ResultOfGetLoggedInQueryDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    gitHubLogout(accessToken: string | null | undefined): Observable<ResultOfGitHubLogoutDto> {
+        let url_ = this.baseUrl + "/api/Auth/GitHubLogout?";
+        if (accessToken !== undefined && accessToken !== null)
+            url_ += "AccessToken=" + encodeURIComponent("" + accessToken) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGitHubLogout(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGitHubLogout(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ResultOfGitHubLogoutDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ResultOfGitHubLogoutDto>;
+        }));
+    }
+
+    protected processGitHubLogout(response: HttpResponseBase): Observable<ResultOfGitHubLogoutDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ResultOfGitHubLogoutDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1112,6 +1163,7 @@ export class ExchangeCodeRequest implements IExchangeCodeRequest {
     email?: string;
     avatar_url?: string;
     html_url?: string;
+    access_token?: string;
 
     constructor(data?: IExchangeCodeRequest) {
         if (data) {
@@ -1129,6 +1181,7 @@ export class ExchangeCodeRequest implements IExchangeCodeRequest {
             this.email = _data["email"];
             this.avatar_url = _data["avatar_url"];
             this.html_url = _data["html_url"];
+            this.access_token = _data["access_token"];
         }
     }
 
@@ -1146,6 +1199,7 @@ export class ExchangeCodeRequest implements IExchangeCodeRequest {
         data["email"] = this.email;
         data["avatar_url"] = this.avatar_url;
         data["html_url"] = this.html_url;
+        data["access_token"] = this.access_token;
         return data;
     }
 }
@@ -1156,6 +1210,7 @@ export interface IExchangeCodeRequest {
     email?: string;
     avatar_url?: string;
     html_url?: string;
+    access_token?: string;
 }
 
 export class ResultOfLogoutDto implements IResultOfLogoutDto {
@@ -1320,6 +1375,86 @@ export class GetLoggedInQueryDto implements IGetLoggedInQueryDto {
 
 export interface IGetLoggedInQueryDto {
     loggedInId?: string | undefined;
+}
+
+export class ResultOfGitHubLogoutDto implements IResultOfGitHubLogoutDto {
+    data?: GitHubLogoutDto | undefined;
+    message?: string;
+    resultType?: ResultType;
+
+    constructor(data?: IResultOfGitHubLogoutDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.data = _data["data"] ? GitHubLogoutDto.fromJS(_data["data"]) : <any>undefined;
+            this.message = _data["message"];
+            this.resultType = _data["resultType"];
+        }
+    }
+
+    static fromJS(data: any): ResultOfGitHubLogoutDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ResultOfGitHubLogoutDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        data["message"] = this.message;
+        data["resultType"] = this.resultType;
+        return data;
+    }
+}
+
+export interface IResultOfGitHubLogoutDto {
+    data?: GitHubLogoutDto | undefined;
+    message?: string;
+    resultType?: ResultType;
+}
+
+export class GitHubLogoutDto implements IGitHubLogoutDto {
+    message?: string | undefined;
+
+    constructor(data?: IGitHubLogoutDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.message = _data["message"];
+        }
+    }
+
+    static fromJS(data: any): GitHubLogoutDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GitHubLogoutDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["message"] = this.message;
+        return data;
+    }
+}
+
+export interface IGitHubLogoutDto {
+    message?: string | undefined;
 }
 
 export class GetAllForecastQueryDto implements IGetAllForecastQueryDto {

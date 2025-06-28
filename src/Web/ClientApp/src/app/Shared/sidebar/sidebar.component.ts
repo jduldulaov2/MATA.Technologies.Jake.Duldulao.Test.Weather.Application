@@ -15,9 +15,17 @@ export class SidebarComponent {
   constructor(private loader: SpinnerServiceService, private authClient: AuthClient) {}
 
   ExternalSignOut(){
-    localStorage.removeItem("github_token");
-    localStorage.clear();
-    location.href = '/login';
+
+    const storedResult = JSON.parse(localStorage.getItem('github_token') || '{}');
+
+    this.authClient.gitHubLogout(storedResult.access_token).subscribe({
+      next: result => {
+        localStorage.removeItem("github_token");
+        localStorage.clear();
+        location.href = '/login';
+      },
+      error: error => console.error(error)
+    });
   }
 
   SignOut(){

@@ -52,8 +52,9 @@ export class LoginComponent {
   }
 
   RedirectToGitHub(){
+    const baseUrl = window.location.origin;
     const clientId = 'Ov23liaWF3wQPaLy03zB';
-    const redirectUri = encodeURIComponent('https://localhost:44447/auth/callback');
+    const redirectUri = encodeURIComponent(baseUrl + '/auth/callback');
     const scope = 'read:user user:email';
 
     window.location.href = 

@@ -8,6 +8,9 @@ using MATA.Technologies.Jake.Duldulao.Test.Weather.Application.Application.Commo
 using MATA.Technologies.Jake.Duldulao.Test.Weather.Application.Application.Common.Models;
 using MATA.Technologies.Jake.Duldulao.Test.Weather.Application.Application.Common.Models.Enums;
 using MATA.Technologies.Jake.Duldulao.Test.Weather.Application.Application.Forecast.Command.CreateForecast;
+using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using static System.Net.WebRequestMethods;
 
 
@@ -20,16 +23,19 @@ public class ExchangeCodeCommandHandler : IRequestHandler<ExchangeCodeCommand, R
 {
     private readonly IIdentityService _identityService;
     private readonly HttpClient _http;
+    private readonly IConfiguration _config;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public ExchangeCodeCommandHandler(IIdentityService identityService)
+    public ExchangeCodeCommandHandler(IIdentityService identityService, IConfiguration config, IHttpContextAccessor httpContextAccessor)
     {
         _identityService = identityService;
         _http = new HttpClient();
+        _config = config;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<Result<ExchangeCodeRequest>> Handle(ExchangeCodeCommand request, CancellationToken cancellationToken)
     {
-
         if (request == null || string.IsNullOrEmpty(request.Code))
             return new()
             {
@@ -41,17 +47,21 @@ public class ExchangeCodeCommandHandler : IRequestHandler<ExchangeCodeCommand, R
                 ResultType = ResultType.Success,
             };
 
-        var clientId = "Ov23liaWF3wQPaLy03zB";
-        var clientSecret = "e14635370d4f231bd3738edd6a4d15a658639f5b";
+        var clientSecret = _config["GitSettings:ClientSecret"];
+        var clientId = _config["GitSettings:ClientId"];
+        var redirectUrl = _config["GitSettings:RedirectUri"];
+        var authAccessTokenUrl = _config["GitSettings:AuthAccessTokenUrl"];
+        var reponseAPI = _config["GitSettings:ReponseAPI"];
+        var urls = GetBaseUrl();
 
         var response = await _http.PostAsync(
-            "https://github.com/login/oauth/access_token",
+            authAccessTokenUrl,
             new FormUrlEncodedContent(new Dictionary<string, string>
             {
-                ["client_id"] = clientId,
-                ["client_secret"] = clientSecret,
+                ["client_id"] = clientId ?? "",
+                ["client_secret"] = clientSecret ?? "",
                 ["code"] = request.Code,
-                ["redirect_uri"] = "https://localhost:44447/auth/callback"
+                ["redirect_uri"] = GetBaseUrl() + redirectUrl ?? ""
             }));
 
         var body = await response.Content.ReadAsStringAsync();
@@ -62,7 +72,7 @@ public class ExchangeCodeCommandHandler : IRequestHandler<ExchangeCodeCommand, R
         _http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
         _http.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
 
-        var response_api = await _http.GetAsync("https://api.github.com/user");
+        var response_api = await _http.GetAsync(reponseAPI);
 
         var json = await response_api.Content.ReadAsStringAsync();
 
@@ -79,11 +89,24 @@ public class ExchangeCodeCommandHandler : IRequestHandler<ExchangeCodeCommand, R
                 name = gitHubUser?.name ?? "",
                 email = gitHubUser?.email ?? "",
                 avatar_url = gitHubUser?.avatar_url ?? "",
-                html_url = gitHubUser?.html_url ?? ""
+                html_url = gitHubUser?.html_url ?? "",
+                access_token = accessToken ?? ""
             },
             Message = "success",
             ResultType = ResultType.Success,
         };
 
+    }
+
+    public string? GetBaseUrl()
+    {
+        var request = _httpContextAccessor?.HttpContext?.Request;
+        if (request == null)
+        {
+            // You can log or handle this gracefully depending on your use case
+            return null;
+        }
+
+        return $"{request.Scheme}://{request.Host}";
     }
 }

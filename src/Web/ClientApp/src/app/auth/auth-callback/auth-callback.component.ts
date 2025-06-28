@@ -21,6 +21,17 @@ export class AuthCallbackComponent {
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
     const code = params['code'];
+    const error = params['error'];
+    const errorDescription = params['error_description'];
+
+    if (error) {
+      // GitHub returned an error (e.g., user denied access)
+      console.warn('GitHub Auth Error:', error, errorDescription);
+      alert("GitHub login failed: " + decodeURIComponent(errorDescription || error));
+      location.href = '/login'; // Redirect to login page
+      return;
+    }
+    
     if (code) {
 
       this.authClient.getGitTokens(code).subscribe({
@@ -31,9 +42,14 @@ export class AuthCallbackComponent {
           location.href = '/portal/my-dashboard';
         }else{
           alert("Something went wrong");
+           location.href = '/login'; // Optional: redirect on token error
         }
       },
-      error: error => console.error(error)
+      error: error => {
+          console.error(error);
+          alert("An error occurred during token exchange.");
+          location.href = '/login'; // Optional: redirect on API error
+        }
     });
 
       // // Exchange code for token with backend

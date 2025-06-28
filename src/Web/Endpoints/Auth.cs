@@ -1,4 +1,5 @@
 ﻿using MATA.Technologies.Jake.Duldulao.Test.Weather.Application.Application.Auth.Commands.ExternalLogin;
+using MATA.Technologies.Jake.Duldulao.Test.Weather.Application.Application.Auth.Commands.ExternalLogout;
 using MATA.Technologies.Jake.Duldulao.Test.Weather.Application.Application.Auth.Commands.Login;
 using MATA.Technologies.Jake.Duldulao.Test.Weather.Application.Application.Auth.Commands.Logout;
 using MATA.Technologies.Jake.Duldulao.Test.Weather.Application.Application.Auth.Queries.GetLoggedIn;
@@ -15,6 +16,7 @@ public class Auth : EndpointGroupBase
             .MapGet(GetGitTokens, "GetGitTokens")
             .MapGet(LogOut, "LogOut")
             .MapGet(GeLoggedIn, "GeLoggedIn")
+            .MapGet(GitHubLogout, "GitHubLogout")
             ;
     }
 
@@ -38,4 +40,8 @@ public class Auth : EndpointGroupBase
         return await sender.Send(query);
     }
 
+    public async Task<Result<GitHubLogoutDto>> GitHubLogout(ISender sender, [AsParameters] GitHubLogoutCommand query)
+    {
+        return await sender.Send(query);
+    }
 }

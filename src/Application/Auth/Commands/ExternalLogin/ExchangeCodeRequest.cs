@@ -12,4 +12,5 @@ public class ExchangeCodeRequest
     public string email { get; set; } = default!;
     public string avatar_url { get; set; } = default!;
     public string html_url { get; set; } = default!;
+    public string access_token { get; set; } = default!;
 }
